@@ -86,6 +86,7 @@ const convertBtn = document.getElementById('convertBtn');
 const copyBtn = document.getElementById('copyBtn');
 const shortenLinkBtn = document.getElementById('shortenLinkBtn');
 const pasteBtn = document.getElementById('pasteBtn');
+const reloadBtn = document.getElementById('reloadBtn');
 
 // Xử lý sự kiện dán từ clipboard
 pasteBtn.addEventListener('click', async () => {
@@ -144,6 +145,11 @@ pasteBtn.addEventListener('click', async () => {
         inputText.select();
         showToast('Vui lòng dùng Ctrl+V (hoặc Cmd+V) để dán!', 'info', 2000);
     }
+});
+
+// Xử lý sự kiện tải lại trang
+reloadBtn.addEventListener('click', () => {
+    location.reload();
 });
 
 // Xử lý sự kiện khi nhấn nút Đổi Icon
