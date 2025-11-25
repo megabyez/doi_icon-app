@@ -122,6 +122,121 @@ textarea[readonly] {
     margin-top: 10px;
 }
 
+.btn-link {
+    background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+
+.btn-link:hover {
+    box-shadow: 0 5px 20px rgba(253, 160, 133, 0.4);
+}
+
+/* Toast Notification */
+#toastContainer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toast {
+    background: white;
+    border-radius: 12px;
+    padding: 16px 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    min-width: 300px;
+    max-width: 400px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: slideInRight 0.3s ease-out, fadeOut 0.3s ease-out 2.7s;
+    animation-fill-mode: both;
+    position: relative;
+    overflow: hidden;
+}
+
+.toast::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.toast.success::before {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.toast.warning::before {
+    background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+}
+
+.toast.error::before {
+    background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+}
+
+.toast-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.toast-content {
+    flex: 1;
+    color: #333;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s, color 0.2s;
+    flex-shrink: 0;
+}
+
+.toast-close:hover {
+    background: #f0f0f0;
+    color: #666;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
 /* Responsive */
 @media (max-width: 600px) {
     .card {
@@ -134,5 +249,16 @@ textarea[readonly] {
     
     .subtitle {
         font-size: 1em;
+    }
+    
+    #toastContainer {
+        right: 10px;
+        left: 10px;
+        top: 10px;
+    }
+    
+    .toast {
+        min-width: auto;
+        max-width: 100%;
     }
 }

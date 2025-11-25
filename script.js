@@ -44,11 +44,47 @@ function replaceAllEmojis(text) {
     return result;
 }
 
+// Hàm hiển thị thông báo toast đẹp
+function showToast(message, type = 'info', duration = 3000) {
+    const toastContainer = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    
+    // Icon theo loại
+    const icons = {
+        success: '✅',
+        warning: '⚠️',
+        error: '❌',
+        info: 'ℹ️'
+    };
+    
+    toast.innerHTML = `
+        <span class="toast-icon">${icons[type] || icons.info}</span>
+        <span class="toast-content">${message}</span>
+        <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+    `;
+    
+    toastContainer.appendChild(toast);
+    
+    // Tự động xóa sau duration
+    setTimeout(() => {
+        if (toast.parentElement) {
+            toast.style.animation = 'fadeOut 0.3s ease-out';
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.remove();
+                }
+            }, 300);
+        }
+    }, duration);
+}
+
 // Lấy các phần tử DOM
 const inputText = document.getElementById('inputText');
 const outputText = document.getElementById('outputText');
 const convertBtn = document.getElementById('convertBtn');
 const copyBtn = document.getElementById('copyBtn');
+const shortenLinkBtn = document.getElementById('shortenLinkBtn');
 
 // Xử lý sự kiện khi nhấn nút Đổi Icon
 convertBtn.addEventListener('click', () => {
@@ -59,7 +95,7 @@ convertBtn.addEventListener('click', () => {
         outputText.value = result;
     } else {
         outputText.value = '';
-        alert('Vui lòng nhập văn bản!');
+        showToast('Vui lòng nhập văn bản!', 'warning');
     }
 });
 
@@ -123,10 +159,41 @@ copyBtn.addEventListener('click', () => {
                 copyBtn.style.background = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
             }, 2000);
         }).catch(err => {
-            alert('Không thể sao chép. Vui lòng thử chọn và copy thủ công!');
+            showToast('Không thể sao chép. Vui lòng thử chọn và copy thủ công!', 'error');
         });
     } else {
-        alert('Không có nội dung để sao chép!');
+        showToast('Không có nội dung để sao chép!', 'warning');
+    }
+});
+
+// Xử lý sự kiện mở trang rút gọn link
+shortenLinkBtn.addEventListener('click', () => {
+    const output = outputText.value;
+    
+    if (output) {
+        // Copy kết quả vào clipboard trước
+        copyToClipboard(output).then(() => {
+            // Mở trang rút gọn link
+            window.open('https://mikichan.mobi/sualink.php?key=mikicute', '_blank');
+            
+            // Thông báo cho user
+            const originalText = shortenLinkBtn.textContent;
+            shortenLinkBtn.textContent = '✅ Đã copy! Dán vào ô "Đoạn văn"';
+            shortenLinkBtn.style.background = 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)';
+            
+            setTimeout(() => {
+                shortenLinkBtn.textContent = originalText;
+                shortenLinkBtn.style.background = 'linear-gradient(135deg, #f6d365 0%, #fda085 100%)';
+            }, 3000);
+        }).catch(err => {
+            // Nếu copy thất bại, vẫn mở trang và thông báo
+            window.open('https://mikichan.mobi/sualink.php?key=mikicute', '_blank');
+            showToast('Đã mở trang rút gọn link. Vui lòng copy kết quả và dán vào ô "Đoạn văn"!', 'info', 4000);
+        });
+    } else {
+        // Nếu chưa có kết quả, vẫn mở trang nhưng thông báo
+        window.open('https://mikichan.mobi/sualink.php?key=mikicute', '_blank');
+        showToast('Chưa có kết quả để copy. Vui lòng nhập văn bản và click "Đổi Icon" trước!', 'warning', 4000);
     }
 });
 
