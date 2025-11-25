@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đổi Icon - Emoji Changer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>🌸 Đổi Icon</h1>
+            <p class="subtitle">Thay đổi tất cả emoji thành 🌸</p>
+            
+            <div class="input-group">
+                <label for="inputText">Nhập văn bản:</label>
+                <textarea 
+                    id="inputText" 
+                    placeholder="💥 Sữa tắm hương nước hoa Pháp Enchanteur Deluxe 900g + kèm quà: https://s.shopee.vn/Lfgp0UA1Y?lp=aff"
+                    rows="4"
+                ></textarea>
+            </div>
+            
+            <button id="convertBtn" class="btn">Đổi Icon</button>
+            
+            <div class="output-group">
+                <label for="outputText">Kết quả:</label>
+                <textarea 
+                    id="outputText" 
+                    readonly
+                    rows="4"
+                ></textarea>
+                <button id="copyBtn" class="btn btn-secondary">📋 Sao chép</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
