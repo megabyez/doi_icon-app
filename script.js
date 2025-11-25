@@ -85,6 +85,28 @@ const outputText = document.getElementById('outputText');
 const convertBtn = document.getElementById('convertBtn');
 const copyBtn = document.getElementById('copyBtn');
 const shortenLinkBtn = document.getElementById('shortenLinkBtn');
+const pasteBtn = document.getElementById('pasteBtn');
+
+// Xử lý sự kiện dán từ clipboard
+pasteBtn.addEventListener('click', async () => {
+    try {
+        // Thử dùng Clipboard API
+        if (navigator.clipboard && window.isSecureContext) {
+            const text = await navigator.clipboard.readText();
+            inputText.value = text;
+            inputText.focus();
+            showToast('Đã dán văn bản!', 'success');
+        } else {
+            // Fallback: focus vào textarea và hướng dẫn user paste thủ công
+            inputText.focus();
+            showToast('Vui lòng dùng Ctrl+V (hoặc Cmd+V) để dán!', 'info', 3000);
+        }
+    } catch (err) {
+        // Nếu không có quyền truy cập clipboard, focus vào textarea
+        inputText.focus();
+        showToast('Vui lòng dùng Ctrl+V (hoặc Cmd+V) để dán!', 'info', 3000);
+    }
+});
 
 // Xử lý sự kiện khi nhấn nút Đổi Icon
 convertBtn.addEventListener('click', () => {
