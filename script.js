@@ -70,12 +70,49 @@ inputText.addEventListener('keydown', (e) => {
     }
 });
 
+// Hàm sao chép với fallback
+function copyToClipboard(text) {
+    // Thử dùng Clipboard API (yêu cầu HTTPS hoặc localhost)
+    if (navigator.clipboard && window.isSecureContext) {
+        return navigator.clipboard.writeText(text).then(() => {
+            return true;
+        }).catch(() => {
+            // Fallback nếu Clipboard API thất bại
+            return fallbackCopyTextToClipboard(text);
+        });
+    } else {
+        // Dùng phương pháp cũ nếu Clipboard API không khả dụng
+        return fallbackCopyTextToClipboard(text);
+    }
+}
+
+// Phương pháp sao chép dự phòng (hoạt động trên cả HTTP và HTTPS)
+function fallbackCopyTextToClipboard(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textArea);
+        return successful ? Promise.resolve() : Promise.reject();
+    } catch (err) {
+        document.body.removeChild(textArea);
+        return Promise.reject(err);
+    }
+}
+
 // Xử lý sự kiện sao chép
 copyBtn.addEventListener('click', () => {
     const output = outputText.value;
     
     if (output) {
-        navigator.clipboard.writeText(output).then(() => {
+        copyToClipboard(output).then(() => {
             // Thông báo thành công
             const originalText = copyBtn.textContent;
             copyBtn.textContent = '✅ Đã sao chép!';
@@ -86,7 +123,7 @@ copyBtn.addEventListener('click', () => {
                 copyBtn.style.background = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
             }, 2000);
         }).catch(err => {
-            alert('Không thể sao chép. Vui lòng thử lại!');
+            alert('Không thể sao chép. Vui lòng thử chọn và copy thủ công!');
         });
     } else {
         alert('Không có nội dung để sao chép!');
