@@ -90,21 +90,59 @@ const pasteBtn = document.getElementById('pasteBtn');
 // Xử lý sự kiện dán từ clipboard
 pasteBtn.addEventListener('click', async () => {
     try {
-        // Thử dùng Clipboard API
+        // Thử dùng Clipboard API (hoạt động trên HTTPS và localhost)
         if (navigator.clipboard && window.isSecureContext) {
             const text = await navigator.clipboard.readText();
             inputText.value = text;
             inputText.focus();
+            // Đặt cursor ở cuối text
+            inputText.setSelectionRange(text.length, text.length);
             showToast('Đã dán văn bản!', 'success');
         } else {
-            // Fallback: focus vào textarea và hướng dẫn user paste thủ công
+            // Trên HTTP: dùng phương pháp fallback với textarea ẩn
+            const hiddenTextarea = document.createElement('textarea');
+            hiddenTextarea.style.position = 'fixed';
+            hiddenTextarea.style.left = '-999999px';
+            hiddenTextarea.style.top = '-999999px';
+            hiddenTextarea.style.opacity = '0';
+            document.body.appendChild(hiddenTextarea);
+            hiddenTextarea.focus();
+            
+            // Thử dùng execCommand để paste (có thể không hoạt động trên một số browser)
+            try {
+                const pasted = document.execCommand('paste');
+                if (pasted && hiddenTextarea.value) {
+                    inputText.value = hiddenTextarea.value;
+                    inputText.focus();
+                    inputText.setSelectionRange(inputText.value.length, inputText.value.length);
+                    showToast('Đã dán văn bản!', 'success');
+                    document.body.removeChild(hiddenTextarea);
+                    return;
+                }
+            } catch (e) {
+                // execCommand không hoạt động
+            }
+            
+            // Nếu execCommand không hoạt động, focus vào textarea chính và hướng dẫn
+            document.body.removeChild(hiddenTextarea);
             inputText.focus();
-            showToast('Vui lòng dùng Ctrl+V (hoặc Cmd+V) để dán!', 'info', 3000);
+            inputText.select();
+            
+            // Thử trigger paste event (có thể không hoạt động)
+            const pasteEvent = new ClipboardEvent('paste', {
+                bubbles: true,
+                cancelable: true,
+                clipboardData: new DataTransfer()
+            });
+            
+            // Focus và chờ user paste
+            showToast('Vui lòng dùng Ctrl+V (hoặc Cmd+V) để dán!', 'info', 2000);
         }
     } catch (err) {
-        // Nếu không có quyền truy cập clipboard, focus vào textarea
+        // Nếu có lỗi, focus vào textarea và hướng dẫn
         inputText.focus();
-        showToast('Vui lòng dùng Ctrl+V (hoặc Cmd+V) để dán!', 'info', 3000);
+        inputText.select();
+        showToast('Vui lòng dùng Ctrl+V (hoặc Cmd+V) để dán!', 'info', 2000);
     }
 });
 
